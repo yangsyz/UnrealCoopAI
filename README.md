@@ -6,6 +6,9 @@
 ## &nbsp;&nbsp;&nbsp;&nbsp;It is an Unreal game project, mainly focus on the friend AI.
 ## &nbsp;&nbsp;&nbsp;&nbsp;Still in development :)&nbsp;&nbsp;&nbsp;project lasts 2 months and will end in september
 ---
+## &nbsp;&nbsp;The game story can be summerised as: Save your a great adventurer out, but he sacrificed &nbsp;&nbsp;&nbsp;&nbsp; himself finally for you because of something unavoided. Now you get a chance to save  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;him really this time! &emsp;
+## &nbsp;&nbsp;&nbsp;&nbsp;Enjoy cooperating with him!
+---
 # Currently assets announcement
 &emsp;
 ## &nbsp;&nbsp;&nbsp;&nbsp;Animation assets: GhoustSamurai, Unreal official store
