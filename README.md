@@ -17,3 +17,4 @@
 ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main background music: HOYO-MiX - Torches
 ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start menu music: MSR Adam Gubman - 黄金时代的遗产
 ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End menu music: MSR PMP - 光影
+### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Battle music: Sekiro Offcial Sound Track - Knife's Edge
