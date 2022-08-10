@@ -11,7 +11,7 @@
 ---
 # Currently assets announcement
 &emsp;
-## &nbsp;&nbsp;&nbsp;&nbsp;Animation assets: GhoustSamurai, Unreal official store
+## &nbsp;&nbsp;&nbsp;&nbsp;Animation assets: GhoustSamurai, which was free assets on Unreal official store
 &emsp;
 ## &nbsp;&nbsp;&nbsp;&nbsp;Music assets:
 ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main background music: HOYO-MiX - Torches
