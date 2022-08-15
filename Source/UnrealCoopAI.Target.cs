@@ -9,7 +9,7 @@ public class UnrealCoopAITarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-
+		bUseUnityBuild = false;
 		ExtraModuleNames.AddRange( new string[] { "UnrealCoopAI" } );
 	}
 }

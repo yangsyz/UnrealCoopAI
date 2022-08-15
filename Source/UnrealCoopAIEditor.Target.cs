@@ -9,7 +9,7 @@ public class UnrealCoopAIEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-
+		bUseUnityBuild = false;
 		ExtraModuleNames.AddRange( new string[] { "UnrealCoopAI" } );
 	}
 }
