@@ -148,3 +148,8 @@ void AEnemyAIController::SenseStuff(AActor* testActors, FAIStimulus stimulus)
 	}
 		
 }
+
+UBehaviorTreeComponent* AEnemyAIController::Get_btComponent() const
+{
+	return EnemyBehaviorTreeComponent;
+}

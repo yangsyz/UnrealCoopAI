@@ -11,8 +11,7 @@
 
 EBTNodeResult::Type UMyBTTask_Attacking::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	OwnerTree = &OwnerComp;
-	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
+	EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 
 	if (TheEnemy)
@@ -37,13 +36,11 @@ EBTNodeResult::Type UMyBTTask_Attacking::ExecuteTask(UBehaviorTreeComponent& Own
 
 UMyBTTask_Attacking::UMyBTTask_Attacking()
 {
-	OwnerTree = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("Attack Tree Component"));
 	AttackMontage = CreateDefaultSubobject<UAnimMontage>(TEXT("AttackMontage"));
-	
 }
 
 void UMyBTTask_Attacking::PlayAnimation()
 {
-	FinishLatentTask(*OwnerTree, EBTNodeResult::Succeeded);
+	FinishLatentTask(*EnemyController->Get_btComponent() , EBTNodeResult::Succeeded);
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }

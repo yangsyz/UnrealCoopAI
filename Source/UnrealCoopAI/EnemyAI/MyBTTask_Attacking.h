@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <UnrealCoopAI/EnemyAI/EnemyAIController.h>
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "MyBTTask_Attacking.generated.h"
 
@@ -18,17 +19,17 @@ public:
 
 	UMyBTTask_Attacking();
 
-	UPROPERTY(EditAnywhere)
-		UBehaviorTreeComponent* OwnerTree;
-
 	UPROPERTY(BlueprintReadWrite)
 		FTimerHandle TimerHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+		AEnemyAIController* EnemyController;
 
 	UFUNCTION(BlueprintCallable)
 		void PlayAnimation();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-			UAnimMontage* AttackMontage;
+		UAnimMontage* AttackMontage;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 

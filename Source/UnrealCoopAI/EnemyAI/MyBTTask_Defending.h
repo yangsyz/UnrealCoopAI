@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include <UnrealCoopAI/EnemyAI/EnemyAIController.h>
 #include "MyBTTask_Defending.generated.h"
 
 /**
@@ -17,8 +17,6 @@ class UNREALCOOPAI_API UMyBTTask_Defending : public UBTTask_BlackboardBase
 	
 public:
 
-	UMyBTTask_Defending();
-
 	UPROPERTY(BlueprintReadWrite)
 		bool FirstTime = true;
 
@@ -29,10 +27,7 @@ public:
 		FTimerHandle TimerHandle;
 
 	UPROPERTY(BlueprintReadWrite)
-		UBehaviorTreeComponent* DefendTree;
-
-	UPROPERTY(BlueprintReadWrite)
-		uint8 DefendNode;
+		AEnemyAIController* EnemyController;
 
 	UFUNCTION()
 		void WaitUntil();

@@ -53,6 +53,9 @@ public:
 		UBlackboardComponent* Get_blackboard() const;
 
 	UFUNCTION()
+		UBehaviorTreeComponent* Get_btComponent() const;
+
+	UFUNCTION()
 		AEnemyCharacter* Get_selfActor() const;
 
 	virtual void OnPossess(APawn* const pawn) override;

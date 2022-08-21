@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <UnrealCoopAI/EnemyAI/EnemyAIController.h>
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BehaviorTree/BTTaskNode.h"
 #include "MyBTTask_MoveToTarget.generated.h"
 
 /**
@@ -17,13 +17,8 @@ class UNREALCOOPAI_API UMyBTTask_MoveToTarget : public UBTTask_BlackboardBase
 	
 public:
 
-	UMyBTTask_MoveToTarget();
-
 	UPROPERTY(BlueprintReadWrite)
-		uint8 MoveNode;
-
-	UPROPERTY(BlueprintReadWrite)
-		UBehaviorTreeComponent* MoveTree;
+		AEnemyAIController* EnemyController;
 
 	UPROPERTY(BlueprintReadWrite)
 		FTimerHandle TimerHandle;

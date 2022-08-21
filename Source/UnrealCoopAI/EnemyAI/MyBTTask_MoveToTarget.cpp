@@ -11,10 +11,7 @@
 
 EBTNodeResult::Type UMyBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	MoveTree = &OwnerComp;
-	MoveNode = *NodeMemory;
-
-	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
+	EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 
 	UObject* TargetActor = EnemyController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor")));
@@ -26,7 +23,7 @@ EBTNodeResult::Type UMyBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& 
 
 	if (con == EPathFollowingRequestResult::AlreadyAtGoal) {
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-		FinishLatentTask(*MoveTree, EBTNodeResult::Succeeded);
+		FinishLatentTask(*EnemyController->Get_btComponent(), EBTNodeResult::Succeeded);
 		return EBTNodeResult::Succeeded;
 	}
 	else {
@@ -38,10 +35,18 @@ EBTNodeResult::Type UMyBTTask_MoveToTarget::ExecuteTask(UBehaviorTreeComponent& 
 
 void UMyBTTask_MoveToTarget::OnArrivedTarget()
 {
-	UMyBTTask_MoveToTarget::ExecuteTask(*MoveTree, &MoveNode);
-}
+	UObject* TargetActor = EnemyController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor")));
+	AActor* TheActor = Cast<AActor>(TargetActor);
+	EPathFollowingRequestResult::Type con = EnemyController->MoveToActor(TheActor, (float)100, true, true, true, NULL, true);
 
-UMyBTTask_MoveToTarget::UMyBTTask_MoveToTarget() 
-{
-	MoveTree = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("Move Tree Component"));
+	if (con == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		FinishLatentTask(*EnemyController->Get_btComponent(), EBTNodeResult::Succeeded);
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MoveToTarget::OnArrivedTarget, 0.1f, true);
+	}
+
 }

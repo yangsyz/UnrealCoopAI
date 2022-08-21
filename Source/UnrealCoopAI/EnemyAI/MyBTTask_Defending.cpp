@@ -13,10 +13,8 @@
 
 EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	DefendTree = &OwnerComp;
-	DefendNode = *NodeMemory;
 
-	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
+	EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 
 	if (IsValid(TheEnemy)) 
@@ -31,7 +29,6 @@ EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& Own
 		if (IsDefending)
 		{
 			FirstTime = false;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" IsDefending ")));
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, & UMyBTTask_Defending::WaitUntil, 0.1f, true);
 			return EBTNodeResult::InProgress;
 			
@@ -49,18 +46,18 @@ EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& Own
 
 void UMyBTTask_Defending::WaitUntil()
 {
-	if (IsDefending) {
-		UMyBTTask_Defending::ExecuteTask(*DefendTree, &DefendNode);
+	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
+
+	FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("IsDefending")));
+	IsDefending = IsDefendingProperty->GetPropertyValue_InContainer(TheEnemy);
+
+	if (IsDefending)
+	{
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Defending::WaitUntil, 0.1f, true);
 	}
 	else {
 		FirstTime = true;
-		FinishLatentTask(*DefendTree, EBTNodeResult::Succeeded);
+		FinishLatentTask(*EnemyController->Get_btComponent(), EBTNodeResult::Succeeded);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	}
-	
-}
-
-UMyBTTask_Defending::UMyBTTask_Defending()
-{
-	DefendTree = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("Defend Tree Component"));
 }
