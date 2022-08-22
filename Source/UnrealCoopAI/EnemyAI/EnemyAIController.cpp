@@ -128,7 +128,7 @@ void AEnemyAIController::SenseStuff(AActor* testActors, FAIStimulus stimulus)
 	
 	ACPPPlayerCharacter* ThePlayer = Cast<ACPPPlayerCharacter>(testActors);
 	if (ThePlayer) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" Found Player ")));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" Found Player ")));
 		Get_blackboard()->SetValueAsBool(FName(TEXT("FoundPlayer")), true);
 
 		if (IsValid(TheEnemy))
@@ -143,7 +143,7 @@ void AEnemyAIController::SenseStuff(AActor* testActors, FAIStimulus stimulus)
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(testActors);
 	if (TheFriend)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" Found Friend ")));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" Found Friend ")));
 		Get_blackboard()->SetValueAsObject(FName(TEXT("FriendActor")), TheFriend);
 	}
 		

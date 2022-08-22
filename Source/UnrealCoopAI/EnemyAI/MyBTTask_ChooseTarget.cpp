@@ -47,8 +47,8 @@ EBTNodeResult::Type UMyBTTask_ChooseTarget::ExecuteTask(UBehaviorTreeComponent& 
 	else
 	{
 		EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), ThePlayer);
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" player target ")));
+		//if (GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" player target ")));
 	}
 
 	return EBTNodeResult::Succeeded;
