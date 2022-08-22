@@ -41,12 +41,16 @@ EBTNodeResult::Type UMyBTTask_ChooseTarget::ExecuteTask(UBehaviorTreeComponent& 
 
 	if (FriendDistance != 0 && PlayerDistance > FriendDistance) {
 		EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), TheFriend);
+		FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("FocusedOnFriend")));
+		FocusedOnFriendProperty->SetPropertyValue_InContainer(TheEnemy, true);
 		//if (GEngine)
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" friend target")));
 	}
 	else
 	{
 		EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), ThePlayer);
+		FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("FocusedOnFriend")));
+		FocusedOnFriendProperty->SetPropertyValue_InContainer(TheEnemy, false);
 		//if (GEngine)
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" player target ")));
 	}
