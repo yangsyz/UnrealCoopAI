@@ -4,6 +4,7 @@
 #include "FriendAIV1Controller.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -76,62 +77,86 @@ void AFriendAIV1Controller::Tick(float DeltaTime)
 
 	float distance = 2000;
 	int amount = 0;
+	bool BeingFocused = false;
+
+	
+
 	AEnemyCharacter* Emptyobject = NewObject<AEnemyCharacter>();
+	AEnemyCharacter* ChasingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 	AEnemyCharacter* EmptyEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 	AEnemyCharacter* DefendingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 	AEnemyCharacter* NearestEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 
 
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" should not valid")));
-	bool BeingFocused = false;
+	
 
 	TArray<AActor*> foundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), foundEnemies);
+
 	for (int i = 0; i < foundEnemies.Num(); i++)
 	{
-		AEnemyCharacter* enemies = Cast<AEnemyCharacter>(foundEnemies[i]);
-		float currentdistance = UKismetMathLibrary::Vector_Distance(TheFriendV1->GetActorLocation(), enemies->GetActorLocation());
-		if (currentdistance < 2000.0)
-		{
-			amount++;
+		FBoolProperty* DeadProperty = FindFProperty<FBoolProperty>(foundEnemies[i]->GetClass(), FName(TEXT("Dead")));
+		bool DeadValue = DeadProperty->GetPropertyValue_InContainer(foundEnemies[i]);
+
+		if (IsValid(foundEnemies[i]) && foundEnemies[i] != EmptyEnemy && foundEnemies[i] != Emptyobject && !DeadValue) {
+			AEnemyCharacter* enemies = Cast<AEnemyCharacter>(foundEnemies[i]);
+			float currentdistance = UKismetMathLibrary::Vector_Distance(TheFriendV1->GetActorLocation(), enemies->GetActorLocation());
+			if (currentdistance < 2000.0)
+			{
+				amount++;
+			}
+
+			FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(enemies->GetClass(), FName(TEXT("FocusedOnFriend")));
+			bool FocusedOnFriendValue = FocusedOnFriendProperty->GetPropertyValue_InContainer(enemies);
+
+			if (FocusedOnFriendValue)
+			{
+				BeingFocused = true;
+				ChasingEnemy = enemies;
+				break;
+			}
+
+			FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(enemies->GetClass(), FName(TEXT("IsDefending")));
+			bool IsDefendingValue = IsDefendingProperty->GetPropertyValue_InContainer(enemies);
+
+			if (IsDefendingValue)
+			{
+				DefendingEnemy = enemies;
+			}
+			//else DefendingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
+
+			if (currentdistance <= distance)
+			{
+				distance = currentdistance;
+				NearestEnemy = enemies;
+			}
 		}
-
-		FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(enemies->GetClass(), FName(TEXT("FocusedOnFriend")));
-		bool FocusedOnFriendValue = FocusedOnFriendProperty->GetPropertyValue_InContainer(enemies);
-
-		if (FocusedOnFriendValue)
-		{
-			BeingFocused = true;
-		}
-
-		FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(enemies->GetClass(), FName(TEXT("IsDefending")));
-		bool IsDefendingValue = IsDefendingProperty->GetPropertyValue_InContainer(enemies);
-
-		if (IsDefendingValue)
-		{
-			DefendingEnemy = enemies;
-		}
-		else DefendingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
-
-		if (currentdistance <= distance)
-		{
-			distance = currentdistance;
-			NearestEnemy = enemies;
-		}
+		
 	}
 
-	if (DefendingEnemy != EmptyEnemy)
+	if (!BeingFocused)
 	{
-		Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), DefendingEnemy);
+		if (DefendingEnemy != EmptyEnemy)
+		{
+			Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), DefendingEnemy);
+			Get_blackboard()->SetValueAsBool(FName(TEXT("ShouldEscaping")), BeingFocused);
+		}
+		else {
+			if (NearestEnemy != EmptyEnemy)
+			{
+				Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), NearestEnemy);
+				Get_blackboard()->SetValueAsBool(FName(TEXT("ShouldEscaping")), BeingFocused);
+			}
+		}
 	}
 	else {
-		if (NearestEnemy != EmptyEnemy)
-		{
-			Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), NearestEnemy);
-		}
+		Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), ChasingEnemy);
+		Get_blackboard()->SetValueAsBool(FName(TEXT("ShouldEscaping")), BeingFocused);
 	}
+		
+	
 
-	Get_blackboard()->SetValueAsBool(FName(TEXT("ShouldEscaping")), BeingFocused);
 
 	if (amount == 1) {
 		AEnemyCharacter* target = Cast<AEnemyCharacter>(Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
@@ -154,4 +179,17 @@ void AFriendAIV1Controller::SenseStuff(AActor* testActors, FAIStimulus stimulus)
 		Get_blackboard()->SetValueAsBool(FName(TEXT("FoundEnemy")), true);
 	}
 		
+}
+
+void AFriendAIV1Controller::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
+{
+	if (Result.IsSuccess())
+	{
+		Get_blackboard()->SetValueAsBool(FName(TEXT("HasArrived")), true);
+	}
+	else {
+		AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
+		if(IsValid(TheEnemy))
+			UAIBlueprintHelperLibrary::CreateMoveToProxyObject(this, nullptr, TheEnemy->GetActorLocation(), TheEnemy, (float)100, false);
+	}
 }

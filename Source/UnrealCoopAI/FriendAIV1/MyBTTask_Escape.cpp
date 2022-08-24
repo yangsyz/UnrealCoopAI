@@ -20,13 +20,14 @@ EBTNodeResult::Type UMyBTTask_Escape::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	
 	AEnemyCharacter* TargetEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
 
-	if (IsValid(TargetEnemy))
+	if (IsValid(TargetEnemy) && IsValid(TheFriend))
 	{
-		FVector Destination = UKismetMathLibrary::GetDirectionUnitVector(TargetEnemy->GetActorLocation(), TheFriend->GetActorLocation()) * 700.0;
+		/*FVector Destination = UKismetMathLibrary::GetDirectionUnitVector(TargetEnemy->GetActorLocation(), TheFriend->GetActorLocation()) * 700.0;
 		EPathFollowingRequestResult::Type con = FriendController->MoveToLocation(Destination, (float)20);
 		if(con == EPathFollowingRequestResult::AlreadyAtGoal)
 			return EBTNodeResult::Succeeded;
-		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Escape::OnAnimationFinished, 0.1f, true);
+		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Escape::OnAnimationFinished, 0.1f, true);*/
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Escape::OnAnimationFinished, 1.5f, true);
 	}
 	else return EBTNodeResult::Succeeded;
 
@@ -40,16 +41,25 @@ UMyBTTask_Escape::UMyBTTask_Escape()
 
 void UMyBTTask_Escape::OnAnimationFinished()
 {
+	/*
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(FriendController->Get_selfActor());
 
 	AEnemyCharacter* TargetEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
 
-	FVector Destination = UKismetMathLibrary::GetDirectionUnitVector(TargetEnemy->GetActorLocation(), TheFriend->GetActorLocation()) * 700.0;
-	EPathFollowingRequestResult::Type con = FriendController->MoveToLocation(Destination, (float)20);
-	if (con == EPathFollowingRequestResult::AlreadyAtGoal) {
+	if (IsValid(TargetEnemy) && IsValid(TheFriend)) {
+		
+		FVector Destination = UKismetMathLibrary::GetDirectionUnitVector(TargetEnemy->GetActorLocation(), TheFriend->GetActorLocation()) * 700.0;
+		EPathFollowingRequestResult::Type con = FriendController->MoveToLocation(Destination, (float)20);
+		if (con == EPathFollowingRequestResult::AlreadyAtGoal) {
+			FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
+			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		}
+		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Escape::OnAnimationFinished, 0.1f, true);
+	}
+	else
+	{*/
 		FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	}
-	else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Escape::OnAnimationFinished, 0.1f, true);
-	
+	//}
+
 }

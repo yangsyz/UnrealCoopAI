@@ -17,7 +17,7 @@ EBTNodeResult::Type UMyBTTask_RandomChoose::ExecuteTask(UBehaviorTreeComponent& 
 	ACPPPlayerCharacter* ThePlayer = Cast<ACPPPlayerCharacter>(EnemyController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
 	int n = UKismetMathLibrary::RandomIntegerInRange(0, 5);
 	
-	if (ThePlayer) 
+	if (IsValid(ThePlayer)) 
 	{
 		EnemyController->Get_blackboard()->SetValueAsBool(FName(TEXT("RandomChoose")), n <= 3);
 	}

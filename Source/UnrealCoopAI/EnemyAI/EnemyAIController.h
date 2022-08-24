@@ -24,7 +24,6 @@ public:
 
 	AEnemyAIController();
 
-
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "AI")
 		UBehaviorTree* EnemyBehaviorTree;
 
@@ -61,4 +60,5 @@ public:
 	virtual void OnPossess(APawn* const pawn) override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 };

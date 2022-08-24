@@ -26,8 +26,7 @@ void UMyBTTask_DodegeEnemy::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 	FVector destination;
 
 	if (IsValid(TheEnemy))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" valid enemy ")));
+	{ 
 		float distance = UKismetMathLibrary::Vector_Distance(TheEnemy->GetActorLocation(), ThePlayer->GetActorLocation());
 		FVector direction = UKismetMathLibrary::GetDirectionUnitVector(ThePlayer->GetActorLocation(), TheEnemy->GetActorLocation());
 		if (distance >= 300.0)

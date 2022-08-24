@@ -15,8 +15,12 @@ EBTNodeResult::Type UMyBTTask_ChooseTarget::ExecuteTask(UBehaviorTreeComponent& 
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter> (EnemyController->Get_selfActor());
 
 	ACPPPlayerCharacter* ThePlayer = Cast<ACPPPlayerCharacter>(EnemyController->Get_blackboard()->GetValueAsObject(FName(TEXT("PlayerActor"))));
+	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(EnemyController->Get_blackboard()->GetValueAsObject(FName(TEXT("FriendActor"))));
 
-	if (ThePlayer)
+	float FriendDistance = 0;
+	float PlayerDistance = 0;
+
+	if (IsValid(ThePlayer))
 	{
 		
 		FBoolProperty* DeathProperty = FindFProperty<FBoolProperty>(ThePlayer->GetClass(), FName(TEXT("Death")));
@@ -30,29 +34,33 @@ EBTNodeResult::Type UMyBTTask_ChooseTarget::ExecuteTask(UBehaviorTreeComponent& 
 
 	}
 
-	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(EnemyController->Get_blackboard()->GetValueAsObject(FName(TEXT("FriendActor"))));
-
-	if (TheFriend)
+	if (IsValid(TheFriend))
 	{
 		FriendDistance = UKismetMathLibrary::Vector_Distance(TheEnemy->GetActorLocation(), TheFriend->GetActorLocation());
 	}
 
+	
 
 
-	if (FriendDistance != 0 && PlayerDistance > FriendDistance) {
-		EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), TheFriend);
-		FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("FocusedOnFriend")));
-		FocusedOnFriendProperty->SetPropertyValue_InContainer(TheEnemy, true);
-		//if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" friend target")));
+	if (IsValid(ThePlayer) && IsValid(TheFriend)) {
+		if (PlayerDistance > FriendDistance) {
+			EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), TheFriend);
+			FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("FocusedOnFriend")));
+			FocusedOnFriendProperty->SetPropertyValue_InContainer(TheEnemy, true);
+		}
+		else
+		{
+			EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), ThePlayer);
+			FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("FocusedOnFriend")));
+			FocusedOnFriendProperty->SetPropertyValue_InContainer(TheEnemy, false);
+		}
 	}
-	else
+
+	if (IsValid(ThePlayer) && !IsValid(TheFriend))
 	{
 		EnemyController->Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), ThePlayer);
 		FBoolProperty* FocusedOnFriendProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("FocusedOnFriend")));
 		FocusedOnFriendProperty->SetPropertyValue_InContainer(TheEnemy, false);
-		//if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" player target ")));
 	}
 
 	return EBTNodeResult::Succeeded;

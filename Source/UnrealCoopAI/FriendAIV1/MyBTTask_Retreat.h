@@ -4,31 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include <UnrealCoopAI/EnemyAI/EnemyAIController.h>
-#include "MyBTTask_Defending.generated.h"
+#include <UnrealCoopAI/FriendAIV1/FriendAIV1Controller.h>
+#include "MyBTTask_Retreat.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable)
-class UNREALCOOPAI_API UMyBTTask_Defending : public UBTTask_BlackboardBase
+class UNREALCOOPAI_API UMyBTTask_Retreat : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
 
-	UPROPERTY(BlueprintReadWrite)
-		bool IsDefending;
+	UMyBTTask_Retreat();
 
 	UPROPERTY(BlueprintReadWrite)
 		FTimerHandle TimerHandle;
 
 	UPROPERTY(BlueprintReadWrite)
-		AEnemyAIController* EnemyController;
+		AFriendAIV1Controller* FriendController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		UAnimMontage* AttackMontage;
 
 	UFUNCTION()
-		void WaitUntil();
-
+		void OnAnimationFinished();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

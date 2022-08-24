@@ -13,14 +13,13 @@
 
 EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("defending")));
 	EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 
 	if (IsValid(TheEnemy)) 
 	{
-		if(FirstTime)
-			TheEnemy->DefendEvent();
+		TheEnemy->DefendEvent();
 
 		FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("IsDefending")));
 		IsDefending = IsDefendingProperty->GetPropertyValue_InContainer(TheEnemy);
@@ -28,15 +27,12 @@ EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& Own
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, UKismetStringLibrary::Conv_BoolToString(IsDefending));
 		if (IsDefending)
 		{
-			FirstTime = false;
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, & UMyBTTask_Defending::WaitUntil, 0.1f, true);
 			return EBTNodeResult::InProgress;
 			
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" NotDefending ")));
-			FirstTime = true;
 			return EBTNodeResult::Succeeded;
 		}
 	}
@@ -48,16 +44,23 @@ void UMyBTTask_Defending::WaitUntil()
 {
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 
-	FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("IsDefending")));
-	IsDefending = IsDefendingProperty->GetPropertyValue_InContainer(TheEnemy);
-
-	if (IsDefending)
+	if (IsValid(TheEnemy))
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Defending::WaitUntil, 0.1f, true);
+		FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("IsDefending")));
+		IsDefending = IsDefendingProperty->GetPropertyValue_InContainer(TheEnemy);
+
+		if (IsDefending)
+		{
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Defending::WaitUntil, 0.1f, true);
+		}
+		else {
+			FinishLatentTask(*EnemyController->Get_btComponent(), EBTNodeResult::Succeeded);
+			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		}
 	}
 	else {
-		FirstTime = true;
 		FinishLatentTask(*EnemyController->Get_btComponent(), EBTNodeResult::Succeeded);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	}
+	
 }

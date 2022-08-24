@@ -4,31 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include <UnrealCoopAI/EnemyAI/EnemyAIController.h>
-#include "MyBTTask_Defending.generated.h"
+#include <UnrealCoopAI/FriendAIV1/FriendAIV1Controller.h>
+#include "MyBTTask_KeepDistance.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable)
-class UNREALCOOPAI_API UMyBTTask_Defending : public UBTTask_BlackboardBase
+class UNREALCOOPAI_API UMyBTTask_KeepDistance : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
 
 	UPROPERTY(BlueprintReadWrite)
-		bool IsDefending;
-
-	UPROPERTY(BlueprintReadWrite)
 		FTimerHandle TimerHandle;
 
 	UPROPERTY(BlueprintReadWrite)
-		AEnemyAIController* EnemyController;
+		AFriendAIV1Controller* FriendController;
 
 	UFUNCTION()
-		void WaitUntil();
-
+		void OnArrivedTarget();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

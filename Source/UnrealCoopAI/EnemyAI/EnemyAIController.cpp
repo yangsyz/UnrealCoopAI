@@ -16,7 +16,9 @@
 #include <UnrealCoopAI/Public/CPPFriendParentCharacter.h>
 #include "UObject/ConstructorHelpers.h"
 #include "UObject/UnrealType.h"
+#include "UObject/UObjectGlobals.h"
 #include "Perception/AIPerceptionTypes.h"
+#include <Runtime/AIModule/Classes/BehaviorTree/BTTaskNode.h>
 
 AEnemyCharacter* AEnemyAIController::Get_selfActor() const
 {
@@ -45,7 +47,7 @@ AEnemyAIController::AEnemyAIController()
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> obj(TEXT("BehaviorTree'/Game/Character/CPPEnemyAI/CPPEnemy_BT.CPPEnemy_BT'"));
 	if (obj.Succeeded())
 	{
-		EnemyBehaviorTree = obj.Object;
+		EnemyBehaviorTree = DuplicateObject(obj.Object, NULL );
 	}
 
 	EnemyBehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
@@ -88,6 +90,7 @@ void AEnemyAIController::Tick(float DeltaTime)
 			if (FocusOnPlayerValue)
 			{
 				Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), PlayerActor);
+				Get_blackboard()->SetValueAsBool(FName(TEXT("FocusedOnFriend")), false);
 			}
 
 			if (IsValid(FriendActor))
@@ -98,6 +101,7 @@ void AEnemyAIController::Tick(float DeltaTime)
 				if (FocusOnFriendValue)
 				{
 					Get_blackboard()->SetValueAsObject(FName(TEXT("TargetActor")), FriendActor);
+					Get_blackboard()->SetValueAsBool(FName(TEXT("FocusedOnFriend")), true);
 				}
 			}
 			ACPPPlayerCharacter* ThePlayer = (ACPPPlayerCharacter*)PlayerActor;
@@ -114,12 +118,6 @@ void AEnemyAIController::Tick(float DeltaTime)
 		}
 
 	}
-	else {
-		//if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" no player and friend ")));
-	}
-	
-	
 
 }
 
@@ -152,4 +150,13 @@ void AEnemyAIController::SenseStuff(AActor* testActors, FAIStimulus stimulus)
 UBehaviorTreeComponent* AEnemyAIController::Get_btComponent() const
 {
 	return EnemyBehaviorTreeComponent;
+}
+
+void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) {
+	
+	if (Result.IsSuccess())
+	{
+		Get_blackboard()->SetValueAsBool(FName(TEXT("HasArrived")), true);
+	}
+	
 }
