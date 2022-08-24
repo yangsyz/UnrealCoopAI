@@ -11,7 +11,9 @@
 ---
 # Currently assets announcement
 &emsp;
-## &nbsp;&nbsp;&nbsp;&nbsp;Animation assets: GhoustSamurai, which was free assets on Unreal official store
+## &nbsp;&nbsp;&nbsp;&nbsp;Animation assets: GhoustSamurai, which was free assets on Unreal Official store
+&emsp;
+## &nbsp;&nbsp;&nbsp;&nbsp;Map assets: Lowpoly Style Asia Environment, was free assets on Unreal Official store
 &emsp;
 ## &nbsp;&nbsp;&nbsp;&nbsp;Music assets:
 ### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main background music: HOYO-MiX - Torches
