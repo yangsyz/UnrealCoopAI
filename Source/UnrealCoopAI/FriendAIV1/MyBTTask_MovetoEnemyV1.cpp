@@ -14,54 +14,49 @@ EBTNodeResult::Type UMyBTTask_MovetoEnemyV1::ExecuteTask(UBehaviorTreeComponent&
 	FriendController = Cast<AFriendAIV1Controller>(OwnerComp.GetAIOwner());
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(FriendController->Get_selfActor());
 
-	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
+	TargetEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
 
 	TArray<AActor*> foundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), foundEnemies);
 
-	if (foundEnemies.Contains(TheEnemy)) 
+	if (foundEnemies.Contains(TargetEnemy))
 	{
-		if (IsValid(TheEnemy))
+		if (IsValid(TargetEnemy))
 		{
-			FriendController->ClearFocus(EAIFocusPriority::Gameplay);
-			FriendController->SetFocus(TheEnemy, EAIFocusPriority::Gameplay);
+			FBoolProperty* DeadProperty = FindFProperty<FBoolProperty>(TargetEnemy->GetClass(), FName(TEXT("Dead")));
+			bool DeadValue = DeadProperty->GetPropertyValue_InContainer(TargetEnemy);
+			if (!DeadValue)
+			{
+				FriendController->ClearFocus(EAIFocusPriority::Gameplay);
+				FriendController->SetFocus(TargetEnemy, EAIFocusPriority::Gameplay);
 
-			FriendController->Get_blackboard()->SetValueAsBool(FName(TEXT("HasArrived")), false);
-			UAIBlueprintHelperLibrary::CreateMoveToProxyObject(FriendController, nullptr, TheEnemy->GetActorLocation(), TheEnemy, (float)100, false);
-
-			/*EPathFollowingRequestResult::Type con = FriendController->MoveToActor(TheEnemy, (float)70, true, true, true, NULL, true);
-
-			if (con == EPathFollowingRequestResult::AlreadyAtGoal)
-				return EBTNodeResult::Succeeded;
-			else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MovetoEnemyV1::OnArrivedTarget, 0.2f, true);*/
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MovetoEnemyV1::OnArrivedTarget, 0.2f, true);
-			return EBTNodeResult::InProgress;
+				FriendController->Get_blackboard()->SetValueAsBool(FName(TEXT("HasArrived")), false);
+				if (!FriendController->GetProxy())
+				{
+					UAIBlueprintHelperLibrary::CreateMoveToProxyObject(FriendController, nullptr, TargetEnemy->GetActorLocation(), TargetEnemy, (float)100, true);
+					FriendController->SetProxy(true);
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MovetoEnemyV1::OnArrivedTarget, 0.2f, true);
+				}
+				else return EBTNodeResult::Succeeded;
+				
+				return EBTNodeResult::InProgress;
+			}
+			else return EBTNodeResult::Failed;
+			
 		}
-		else return EBTNodeResult::Succeeded;
+		else return EBTNodeResult::Failed;
 	}
-	else return EBTNodeResult::Succeeded;
-	
-	
+	else return EBTNodeResult::Failed;
 
 	return EBTNodeResult::InProgress;
 }
 
 void UMyBTTask_MovetoEnemyV1::OnArrivedTarget()
 {
-	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
+	TargetEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
 
-	if (IsValid(TheEnemy))
+	if (IsValid(TargetEnemy))
 	{
-		/*
-		EPathFollowingRequestResult::Type con = FriendController->MoveToActor(TheEnemy, (float)50, true, true, true, NULL, true);
-
-		if (con == EPathFollowingRequestResult::AlreadyAtGoal)
-		{
-			FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
-			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-		}
-		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MovetoEnemyV1::OnArrivedTarget, 0.2f, true);*/
-
 		bool arrived = FriendController->Get_blackboard()->GetValueAsBool(FName(TEXT("HasArrived")));
 		if (arrived)
 		{

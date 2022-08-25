@@ -12,9 +12,13 @@ EBTNodeResult::Type UMyBTTask_FriendAttack::ExecuteTask(UBehaviorTreeComponent& 
 {
 	FriendController = Cast<AFriendAIV2Controller>(OwnerComp.GetAIOwner());
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(FriendController->Get_selfActor());
-
-	TheFriend->PlayAnimMontage(AttackMontage, 1.0, NAME_None);
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_FriendAttack::OnAnimationFinished, 2.0f, true);
+	
+	if (IsValid(TheFriend))
+	{
+		TheFriend->PlayAnimMontage(AttackMontage, 1.0, NAME_None);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_FriendAttack::OnAnimationFinished, 2.0f, true);
+	}
+	else return EBTNodeResult::Succeeded;
 
 	return EBTNodeResult::InProgress;
 }

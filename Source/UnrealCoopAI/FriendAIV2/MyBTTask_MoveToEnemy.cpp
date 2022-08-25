@@ -14,27 +14,41 @@ EBTNodeResult::Type UMyBTTask_MoveToEnemy::ExecuteTask(UBehaviorTreeComponent& O
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(FriendController->Get_selfActor());
 
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
+
+	if (IsValid(TheEnemy))
+	{
+		FriendController->ClearFocus(EAIFocusPriority::Gameplay);
+		FriendController->SetFocus(TheEnemy, EAIFocusPriority::Gameplay);
+		EPathFollowingRequestResult::Type con = FriendController->MoveToActor(TheEnemy, (float)50, true, true, true, NULL, true);
+
+		if (con == EPathFollowingRequestResult::AlreadyAtGoal)
+			return EBTNodeResult::Succeeded;
+		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MoveToEnemy::OnArrivedTarget, 0.2f, true);
+	}
+	else return EBTNodeResult::Succeeded;
 	
-	FriendController->ClearFocus(EAIFocusPriority::Gameplay);
-	FriendController->SetFocus(TheEnemy, EAIFocusPriority::Gameplay);
-	EPathFollowingRequestResult::Type con = FriendController->MoveToActor(TheEnemy, (float)50, true, true, true, NULL, true);
-
-	if (con == EPathFollowingRequestResult::AlreadyAtGoal)
-		return EBTNodeResult::Succeeded;
-	else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MoveToEnemy::OnArrivedTarget, 0.2f, true);
-
 	return EBTNodeResult::InProgress;
 }
 
 void UMyBTTask_MoveToEnemy::OnArrivedTarget()
 {
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
-	EPathFollowingRequestResult::Type con = FriendController->MoveToActor(TheEnemy, (float)50, true, true, true, NULL, true);
 
-	if (con == EPathFollowingRequestResult::AlreadyAtGoal)
+	if (IsValid(TheEnemy))
+	{
+		EPathFollowingRequestResult::Type con = FriendController->MoveToActor(TheEnemy, (float)50, true, true, true, NULL, true);
+
+		if (con == EPathFollowingRequestResult::AlreadyAtGoal)
+		{
+			FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
+			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		}
+		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MoveToEnemy::OnArrivedTarget, 0.2f, true);
+
+	}
+	else
 	{
 		FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	}
-	else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_MoveToEnemy::OnArrivedTarget, 0.2f, true);
 }

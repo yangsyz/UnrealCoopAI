@@ -25,7 +25,7 @@ void UMyBTTask_DodegeEnemy::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 
 	FVector destination;
 
-	if (IsValid(TheEnemy))
+	if (IsValid(TheEnemy) && IsValid(ThePlayer))
 	{ 
 		float distance = UKismetMathLibrary::Vector_Distance(TheEnemy->GetActorLocation(), ThePlayer->GetActorLocation());
 		FVector direction = UKismetMathLibrary::GetDirectionUnitVector(ThePlayer->GetActorLocation(), TheEnemy->GetActorLocation());
@@ -33,7 +33,7 @@ void UMyBTTask_DodegeEnemy::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 		{
 			destination = TheEnemy->GetActorLocation() - ThePlayer->GetActorLocation();
 		}
-		else destination = direction * 400.0;
+		else destination = direction * 600.0;
 		FriendController->MoveToLocation(ThePlayer->GetActorLocation() - destination, (float)20);
 	}
 

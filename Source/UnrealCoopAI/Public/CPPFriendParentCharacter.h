@@ -15,6 +15,10 @@ public:
 	// Sets default values for this character's properties
 	ACPPFriendParentCharacter();
 
+	UPROPERTY(BlueprintReadWrite)
+		float Health = 100.0;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

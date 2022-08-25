@@ -13,7 +13,6 @@
 
 EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("defending")));
 	EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 
@@ -24,7 +23,6 @@ EBTNodeResult::Type UMyBTTask_Defending::ExecuteTask(UBehaviorTreeComponent& Own
 		FBoolProperty* IsDefendingProperty = FindFProperty<FBoolProperty>(TheEnemy->GetClass(), FName(TEXT("IsDefending")));
 		IsDefending = IsDefendingProperty->GetPropertyValue_InContainer(TheEnemy);
 
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, UKismetStringLibrary::Conv_BoolToString(IsDefending));
 		if (IsDefending)
 		{
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, & UMyBTTask_Defending::WaitUntil, 0.1f, true);

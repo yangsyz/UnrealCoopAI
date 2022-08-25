@@ -21,6 +21,9 @@ class UNREALCOOPAI_API AFriendAIV1Controller : public AAIController
 public:
 	AFriendAIV1Controller();
 
+	UPROPERTY(BlueprintReadWrite)
+		bool HasProxy = false;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 		UBehaviorTree* FriendV1BehaviorTree;
 
@@ -38,6 +41,12 @@ public:
 
 	UFUNCTION()
 		void SenseStuff(AActor* testActors, FAIStimulus stimulus);
+
+	UFUNCTION()
+		bool GetProxy();
+
+	UFUNCTION()
+		void SetProxy(bool value);
 
 	UFUNCTION()
 		UBlackboardComponent* Get_blackboard() const;

@@ -11,7 +11,6 @@
 
 EBTNodeResult::Type UMyBTTask_Attacking::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("attacking")));
 	EnemyController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
 	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(EnemyController->Get_selfActor());
 

@@ -75,11 +75,11 @@ void AFriendAIV1Controller::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	float distance = 2000;
+	float distance = 2000.0;
 	int amount = 0;
 	bool BeingFocused = false;
 
-	
+	float defendingDistance = 2000.0;
 
 	AEnemyCharacter* Emptyobject = NewObject<AEnemyCharacter>();
 	AEnemyCharacter* ChasingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
@@ -87,9 +87,6 @@ void AFriendAIV1Controller::Tick(float DeltaTime)
 	AEnemyCharacter* DefendingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 	AEnemyCharacter* NearestEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 
-
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT(" should not valid")));
-	
 
 	TArray<AActor*> foundEnemies;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), foundEnemies);
@@ -122,9 +119,12 @@ void AFriendAIV1Controller::Tick(float DeltaTime)
 
 			if (IsDefendingValue)
 			{
-				DefendingEnemy = enemies;
+				if (currentdistance <= defendingDistance)
+				{
+					DefendingEnemy = enemies;
+					defendingDistance = currentdistance;
+				}
 			}
-			//else DefendingEnemy = NewObject<AEnemyCharacter>(Emptyobject, "empty");
 
 			if (currentdistance <= distance)
 			{
@@ -186,10 +186,16 @@ void AFriendAIV1Controller::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 	if (Result.IsSuccess())
 	{
 		Get_blackboard()->SetValueAsBool(FName(TEXT("HasArrived")), true);
+		HasProxy = false;
 	}
-	else {
-		AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
-		if(IsValid(TheEnemy))
-			UAIBlueprintHelperLibrary::CreateMoveToProxyObject(this, nullptr, TheEnemy->GetActorLocation(), TheEnemy, (float)100, false);
-	}
+}
+
+void AFriendAIV1Controller::SetProxy(bool value)
+{
+	HasProxy = value;
+}
+
+bool AFriendAIV1Controller::GetProxy()
+{
+	return HasProxy;
 }

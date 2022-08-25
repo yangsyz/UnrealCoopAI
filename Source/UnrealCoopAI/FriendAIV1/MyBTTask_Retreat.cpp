@@ -15,9 +15,15 @@ EBTNodeResult::Type UMyBTTask_Retreat::ExecuteTask(UBehaviorTreeComponent& Owner
 	FriendController = Cast<AFriendAIV1Controller>(OwnerComp.GetAIOwner());
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(FriendController->Get_selfActor());
 
-	TheFriend->PlayAnimMontage(AttackMontage, 1.0, NAME_None);
+	if (IsValid(TheFriend))
+	{
+		TheFriend->PlayAnimMontage(AttackMontage, 1.0, NAME_None);
+		FriendController->SetProxy(true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Retreat::OnAnimationFinished, 1.2f, true);
+	}
+	else return EBTNodeResult::Succeeded;
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_Retreat::OnAnimationFinished, 1.5f, true);
+	
 
 
 	return EBTNodeResult::InProgress;
@@ -30,6 +36,7 @@ UMyBTTask_Retreat::UMyBTTask_Retreat()
 
 void UMyBTTask_Retreat::OnAnimationFinished()
 {
+	FriendController->SetProxy(false);
 	FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }

@@ -36,7 +36,7 @@ public:
 		bool IsDefending;
 
 	UPROPERTY(BlueprintReadWrite, Category = ACPPPlayerCharacter)
-		float Health;
+		float Health = 100.0;
 
 	UPROPERTY(BlueprintReadWrite, Category = ACPPPlayerCharacter)
 		bool Death;

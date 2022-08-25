@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
+#include <UnrealCoopAI/Public/EnemyCharacter.h>
 #include <UnrealCoopAI/FriendAIV1/FriendAIV1Controller.h>
 #include "MyBTTask_MovetoEnemyV1.generated.h"
 
@@ -16,6 +17,9 @@ class UNREALCOOPAI_API UMyBTTask_MovetoEnemyV1 : public UBTTask_BlackboardBase
 	GENERATED_BODY()
 	
 public:
+
+	UPROPERTY(BlueprintReadWrite)
+		AEnemyCharacter* TargetEnemy;
 
 	UPROPERTY(BlueprintReadWrite)
 		FTimerHandle TimerHandle;
