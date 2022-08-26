@@ -39,7 +39,12 @@ UMyBTTask_Escape::UMyBTTask_Escape()
 void UMyBTTask_Escape::OnAnimationFinished()
 {
 	FriendController->SetProxy(false);
-	FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-
+	if (IsValid(FriendController->Get_btComponent())) {
+		FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	}
+	else {
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	}
+	
 }

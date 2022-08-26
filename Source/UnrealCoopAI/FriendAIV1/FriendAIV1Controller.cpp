@@ -39,7 +39,9 @@ AFriendAIV1Controller::AFriendAIV1Controller()
 
 UBlackboardComponent* AFriendAIV1Controller::Get_blackboard() const
 {
-	return FriendV1Blackboard;
+	if (IsValid(FriendV1Blackboard))
+		return FriendV1Blackboard;
+	else return NULL;
 }
 
 UBehaviorTreeComponent* AFriendAIV1Controller::Get_btComponent() const

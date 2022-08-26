@@ -41,7 +41,9 @@ AFriendAIV2Controller::AFriendAIV2Controller()
 
 UBlackboardComponent* AFriendAIV2Controller::Get_blackboard() const
 {
-	return FriendV2Blackboard;
+	if (IsValid(FriendV2Blackboard))
+		return FriendV2Blackboard;
+	else return NULL;
 }
 
 UBehaviorTreeComponent* AFriendAIV2Controller::Get_btComponent() const

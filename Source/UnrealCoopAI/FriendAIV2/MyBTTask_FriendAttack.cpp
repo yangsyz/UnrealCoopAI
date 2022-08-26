@@ -25,8 +25,11 @@ EBTNodeResult::Type UMyBTTask_FriendAttack::ExecuteTask(UBehaviorTreeComponent& 
 
 void UMyBTTask_FriendAttack::OnAnimationFinished()
 {
-	FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	if (IsValid(FriendController->Get_btComponent())) {
+		FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	}
+	else GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 }
 
 UMyBTTask_FriendAttack::UMyBTTask_FriendAttack()

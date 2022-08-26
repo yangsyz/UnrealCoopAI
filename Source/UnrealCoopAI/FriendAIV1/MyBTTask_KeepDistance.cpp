@@ -37,22 +37,28 @@ void UMyBTTask_KeepDistance::OnArrivedTarget()
 {
 	ACPPFriendParentCharacter* TheFriend = Cast<ACPPFriendParentCharacter>(FriendController->Get_selfActor());
 
-	AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
-
-	if (IsValid(TheEnemy) && UKismetMathLibrary::Vector_Distance(FriendController->GetPawn()->GetActorLocation(), TheEnemy->GetActorLocation()) <= 400 && !FriendController->GetProxy())
+	if (IsValid(FriendController->Get_blackboard()))
 	{
-		FVector destination = UKismetMathLibrary::GetDirectionUnitVector(TheEnemy->GetActorLocation(), FriendController->GetPawn()->GetActorLocation()) * 450;
-		EPathFollowingRequestResult::Type con = FriendController->MoveToLocation(destination, (float)5);
+		AEnemyCharacter* TheEnemy = Cast<AEnemyCharacter>(FriendController->Get_blackboard()->GetValueAsObject(FName(TEXT("TargetActor"))));
 
-		if (con == EPathFollowingRequestResult::AlreadyAtGoal)
+		if (IsValid(TheEnemy) && UKismetMathLibrary::Vector_Distance(FriendController->GetPawn()->GetActorLocation(), TheEnemy->GetActorLocation()) <= 400 && !FriendController->GetProxy())
 		{
+			FVector destination = UKismetMathLibrary::GetDirectionUnitVector(TheEnemy->GetActorLocation(), FriendController->GetPawn()->GetActorLocation()) * 450;
+			EPathFollowingRequestResult::Type con = FriendController->MoveToLocation(destination, (float)5);
+
+			if (con == EPathFollowingRequestResult::AlreadyAtGoal)
+			{
+				FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
+				GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+			}
+			else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_KeepDistance::OnArrivedTarget, 0.2f, true);
+		}
+		else {
 			FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Succeeded);
 			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 		}
-		else GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_KeepDistance::OnArrivedTarget, 0.2f, true);
 	}
 	else {
-		FinishLatentTask(*FriendController->Get_btComponent(), EBTNodeResult::Failed);
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	}
 }

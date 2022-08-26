@@ -41,6 +41,8 @@ UMyBTTask_Attacking::UMyBTTask_Attacking()
 
 void UMyBTTask_Attacking::PlayAnimation()
 {
-	FinishLatentTask(*EnemyController->Get_btComponent() , EBTNodeResult::Succeeded);
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	if (IsValid(EnemyController->Get_btComponent())) {
+		FinishLatentTask(*EnemyController->Get_btComponent(), EBTNodeResult::Succeeded);
+		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	}
 }
