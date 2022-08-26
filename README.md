@@ -12,6 +12,7 @@
 # Currently assets announcement
 &emsp;
 ## &nbsp;&nbsp;&nbsp;&nbsp;Animation assets: GhoustSamurai, which was free assets on Unreal Official store
+&emsp;
 ## &nbsp;&nbsp;&nbsp;&nbsp;Skeleton assets: Offical Unreal Engine 4 character skeleton.
 &emsp;
 ## &nbsp;&nbsp;&nbsp;&nbsp;Map assets: Lowpoly Style Asia Environment, was free assets on Unreal Official store
