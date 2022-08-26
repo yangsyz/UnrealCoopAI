@@ -27,9 +27,7 @@ AEnemyCharacter* AEnemyAIController::Get_selfActor() const
 
 UBlackboardComponent* AEnemyAIController::Get_blackboard() const
 {
-	if (IsValid(EnemyBlackboard))
-		return EnemyBlackboard;
-	else return NULL;
+	return EnemyBlackboard;
 }
 
 void AEnemyAIController::OnPossess(APawn* const pawn)

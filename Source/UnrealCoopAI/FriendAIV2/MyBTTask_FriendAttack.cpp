@@ -16,7 +16,7 @@ EBTNodeResult::Type UMyBTTask_FriendAttack::ExecuteTask(UBehaviorTreeComponent& 
 	if (IsValid(TheFriend))
 	{
 		TheFriend->PlayAnimMontage(AttackMontage, 1.0, NAME_None);
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_FriendAttack::OnAnimationFinished, 2.0f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UMyBTTask_FriendAttack::OnAnimationFinished, 2.5f, true);
 	}
 	else return EBTNodeResult::Succeeded;
 
